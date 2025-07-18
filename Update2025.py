@@ -16,10 +16,7 @@ st.title("YouTube Viral Topics Tool")
 days = st.number_input("Enter Days to Search (1-30):", min_value=1, max_value=30, value=5)
 
 # ===== CONFIGURATION PARAMETERS =====
-# 1. MAX_SUBSCRIBERS: Set max allowed subscribers (currently 50,000)
 MAX_SUBSCRIBERS = 50000
-
-# 2. MAX_CHANNEL_AGE_MONTHS: Set max channel age in months (currently 6 months)
 MAX_CHANNEL_AGE_MONTHS = 6
 # ====================================
 
@@ -28,7 +25,13 @@ keywords = [
  "Celebrity News", "Hollywood Gossip", "Celebrity Drama", "Celebrity Scandal",
  "Viral Celebrity Moments", "A-List Celebs", "Breaking Hollywood", "Hollywood Rumors",
  "Paparazzi Footage", "Celebrity Breakup", "Shocking Celeb Secrets", "Celeb Leaks",
- "Celebrity Exposed", "Celebrity Couples", "Secret Celebrity Affairs", "Celeb Cheating Rumors"
+ "Celebrity Exposed", "Celebrity Couples", "Secret Celebrity Affairs", "Celeb Cheating Rumors",
+ "Red Carpet Moments", "Celeb Fashion Fails", "Celeb Fights Caught On Camera", "Ex Celebrity Secrets",
+ "Celebrity Court Case", "Hollywood Legal Drama", "Celeb Arrest News", "Viral Celeb Clips",
+ "Behind The Fame", "Hollywood Celeb Update", "Latest Celeb Tea", "Celeb Feud Explained",
+ "Pop Culture Drama", "Celebrity Beef", "Star Caught Lying", "Famous Breakup Story",
+ "TMZ Style Drama", "Celebrity Meltdown", "Hollywood Exposed", "Celebrity Love Triangle",
+ "Scandalous Celebs", "Famous Divorce News", "Hidden Celeb Lives", "Reddit Celeb Gossip"
 ]
 
 # Helper function to parse ISO 8601 duration
@@ -44,13 +47,23 @@ def parse_duration(duration_str):
     
     return hours * 60 + minutes + seconds / 60
 
+# Helper function to parse datetime with milliseconds
+def parse_datetime(datetime_str):
+    """Parse datetime string with or without milliseconds"""
+    try:
+        # Try format without milliseconds
+        return datetime.strptime(datetime_str, "%Y-%m-%dT%H:%M:%SZ")
+    except ValueError:
+        # Try format with milliseconds
+        return datetime.strptime(datetime_str, "%Y-%m-%dT%H:%M:%S.%fZ")
+
 # Fetch Data Button
 if st.button("Fetch Data"):
     try:
         # Calculate date ranges
         start_date = (datetime.utcnow() - timedelta(days=int(days))).isoformat("T") + "Z"
         # Calculate max channel age cutoff (6 months ago)
-        max_channel_age = (datetime.utcnow() - timedelta(days=MAX_CHANNEL_AGE_MONTHS*30)).isoformat("T") + "Z"
+        max_channel_age_cutoff = datetime.utcnow() - timedelta(days=MAX_CHANNEL_AGE_MONTHS*30)
         
         all_results = []
 
@@ -101,7 +114,7 @@ if st.button("Fetch Data"):
 
             # Fetch channel statistics AND creation date
             channel_params = {
-                "part": "statistics,snippet",  # Added snippet to get channel creation date
+                "part": "statistics,snippet",
                 "id": ",".join(channel_ids),
                 "key": API_KEY
             }
@@ -133,12 +146,12 @@ if st.button("Fetch Data"):
                 video_url = f"https://www.youtube.com/watch?v={video['id']['videoId']}"
                 views = int(stat["statistics"].get("viewCount", 0))
                 subs = int(channel["statistics"].get("subscriberCount", 0))
-                created_date = datetime.strptime(channel_creation, "%Y-%m-%dT%H:%M:%SZ")
+                
+                # FIX: Use the new datetime parser that handles milliseconds
+                created_date = parse_datetime(channel_creation)
 
-                # Apply new filters:
-                # 1. Subs <= 50,000
-                # 2. Channel created within last 8 months
-                if subs <= MAX_SUBSCRIBERS and created_date >= datetime.strptime(max_channel_age, "%Y-%m-%dT%H:%M:%SZ"):
+                # Apply filters
+                if subs <= MAX_SUBSCRIBERS and created_date >= max_channel_age_cutoff:
                     all_results.append({
                         "Title": title,
                         "Description": description,
@@ -160,7 +173,7 @@ if st.button("Fetch Data"):
                     f"**Views:** {result['Views']}  \n"
                     f"**Subscribers:** {result['Subscribers']}  \n"
                     f"**Duration:** {result['Duration (min)']} minutes  \n"
-                    f"**Channel Created:** {result['Channel Created']}"  # Show creation date
+                    f"**Channel Created:** {result['Channel Created']}"
                 )
                 st.write("---")
         else:
