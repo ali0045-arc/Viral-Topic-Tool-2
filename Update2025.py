@@ -28,13 +28,7 @@ keywords = [
  "Celebrity News", "Hollywood Gossip", "Celebrity Drama", "Celebrity Scandal",
  "Viral Celebrity Moments", "A-List Celebs", "Breaking Hollywood", "Hollywood Rumors",
  "Paparazzi Footage", "Celebrity Breakup", "Shocking Celeb Secrets", "Celeb Leaks",
- "Celebrity Exposed", "Celebrity Couples", "Secret Celebrity Affairs", "Celeb Cheating Rumors",
- "Red Carpet Moments", "Celeb Fashion Fails", "Celeb Fights Caught On Camera", "Ex Celebrity Secrets",
- "Celebrity Court Case", "Hollywood Legal Drama", "Celeb Arrest News", "Viral Celeb Clips",
- "Behind The Fame", "Hollywood Celeb Update", "Latest Celeb Tea", "Celeb Feud Explained",
- "Pop Culture Drama", "Celebrity Beef", "Star Caught Lying", "Famous Breakup Story",
- "TMZ Style Drama", "Celebrity Meltdown", "Hollywood Exposed", "Celebrity Love Triangle",
- "Scandalous Celebs", "Famous Divorce News", "Hidden Celeb Lives", "Reddit Celeb Gossip"
+ "Celebrity Exposed", "Celebrity Couples", "Secret Celebrity Affairs", "Celeb Cheating Rumors"
 ]
 
 # Helper function to parse ISO 8601 duration
